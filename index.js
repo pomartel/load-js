@@ -88,20 +88,27 @@
   }
 
   function createScript(options) {
-    var script = document.createElement("script");
-    script.charset = options.charset || "utf-8";
+    if(options.type == "text/css") {
+      var script = document.createElement("link");
+      script.rel = "stylesheet";
+      script.href = options.url;
+    } else {
+      var script = document.createElement("script");
+      script.charset = options.charset || "utf-8";
+      script.async = !!options.async;
+
+      if (options.url) {
+        script.src = options.url;
+      }
+
+      if (options.text) {
+        script.text = options.text;
+      }
+    }
+
     script.type = options.type || "text/javascript";
-    script.async = !!options.async;
     script.id = options.id || options.url;
     script.loadJS = "watermark";
-
-    if (options.url) {
-      script.src = options.url;
-    }
-
-    if (options.text) {
-      script.text = options.text;
-    }
 
     return script;
   }
@@ -116,7 +123,9 @@
   }
 
   function getScriptByUrl(url) {
-    var script = url && document.querySelector("script[src='" + url + "']");
+    var script = url &&
+      (document.querySelector("script[src='" + url + "']") ||
+       document.querySelector("link[href='" + url + "']"));
 
     if (script && script.loadJS !== "watermark") {
       console.warn("load-js: duplicate script with url:", url);
