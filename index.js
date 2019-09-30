@@ -1,4 +1,4 @@
-(function(global, factory) {
+(function (global, factory) {
   if (typeof require === "function" && typeof exports === "object" && typeof module === "object") {
     // CommonJS support
     module.exports = factory();
@@ -9,11 +9,15 @@
     // Do browser support
     global.loadJS = factory();
   }
-})(this, function() {
+})(this, function () {
   var cache = {};
   var head = document.getElementsByTagName("head")[0] || document.documentElement;
 
   function exec(options) {
+    if (typeof options === "undefined") {
+      return Promise.resolve();
+    }
+
     if (typeof options === "string") {
       options = {
         url: options
@@ -60,7 +64,7 @@
   }
 
   function loadScript(head, script) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       // Handle Script loading
       var done = false;
 
@@ -71,7 +75,7 @@
       // http://stevesouders.com/efws/script-onload.php
       // https://www.html5rocks.com/en/tutorials/speed/script-loading/
       //
-      script.onload = script.onreadystatechange = function() {
+      script.onload = script.onreadystatechange = function () {
         if (!done && (!script.readyState || script.readyState === "loaded" || script.readyState === "complete")) {
           done = true;
 
@@ -88,7 +92,8 @@
   }
 
   function createScript(options) {
-    if(options.type == "text/css") {
+    options.type = options.type || detectScriptType(options.url);
+    if (options.type == "text/css") {
       var script = document.createElement("link");
       script.rel = "stylesheet";
       script.href = options.url;
@@ -106,11 +111,15 @@
       }
     }
 
-    script.type = options.type || "text/javascript";
+    script.type = options.type;
     script.id = options.id || options.url;
     script.loadJS = "watermark";
 
     return script;
+  }
+
+  function detectScriptType(url) {
+    return url.includes('.css') ? "text/css" : "text/javascript";
   }
 
   function getScriptById(id) {
@@ -125,7 +134,7 @@
   function getScriptByUrl(url) {
     var script = url &&
       (document.querySelector("script[src='" + url + "']") ||
-       document.querySelector("link[href='" + url + "']"));
+        document.querySelector("link[href='" + url + "']"));
 
     if (script && script.loadJS !== "watermark") {
       console.warn("load-js: duplicate script with url:", url);
