@@ -4,10 +4,10 @@
     module.exports = factory();
   } else if (typeof define === "function" && define.amd) {
     // Do AMD support
-    define(["loadJS"], factory);
+    define(["LoadJS"], factory);
   } else {
     // Do browser support
-    global.loadJS = factory();
+    global.LoadJS = factory();
   }
 })(this, function () {
   var cache = {};
@@ -28,7 +28,7 @@
     var cacheEntry = cache[cacheId];
 
     if (cacheEntry) {
-      console.log("load-js: cache hit", cacheId);
+      // console.log("load-js: cache hit", cacheId);
       return cacheEntry;
     }
     else if (options.allowExternal !== false) {
