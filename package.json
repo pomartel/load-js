@@ -1,6 +1,6 @@
 {
   "name": "load-js",
-  "version": "2.0.0",
+  "version": "exotic",
   "description": "Promise based script loader for the browser using script tags",
   "main": "index.js",
   "scripts": {
